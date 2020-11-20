@@ -26,13 +26,17 @@ This is a linux friendly project:)
 
 To run it:
 
-`sudo apt update`
-`sudo apt install build-essential`
-`which gcc`
-`sudo apt-get install mysql-server`
-`sudo apt-get install libmysqlclient-dev`
+```
+sudo apt update
+sudo apt install build-essential
+which gcc
+sudo apt-get install mysql-server
+sudo apt-get install libmysqlclient-dev
+```
 
 Then simply clone the repository on your machine, and `cd` to its directory.
 
-`gcc -o run $(mysql_config --cflags) run.c $(mysql_config --libs)`
-`./run`
+```
+gcc -o run $(mysql_config --cflags) run.c $(mysql_config --libs)
+./run
+```
