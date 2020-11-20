@@ -72,7 +72,45 @@ void add_friend(struct Graph *graph, int src, int dest)
     graph->array[dest].head = newNode;
 }
 
-// A utility function to print the adjacenncy list representation of graph
+int find_user(struct Graph *graph, int src)
+{
+    for (int v = 0; v < graph->V; ++v)
+    {
+        struct user_node *pCrawl = graph->array[v].head;
+        while (pCrawl)
+        {
+            if (pCrawl->dest == src)
+                return 1;
+            pCrawl = pCrawl->next;
+        }
+    }
+}
+
+void delete_user(struct Graph *graph, int a)
+{
+    if (find_user(graph, a))
+    {
+        for (int v = 0; v < graph->V; ++v)
+        {
+            struct user_node *aCrawl = graph->array[v].head;
+            if (v == a)
+            {
+                free(graph->array);
+            }
+        }
+    }
+}
+void delete_your_account(struct Graph *graph, MYSQL *conn)
+{
+    delete_user(graph, atoi(current_uid));
+    sprintf(sql_statement, "DELETE FROM user_database where id=%d", atoi(current_uid));
+    if (mysql_query(conn, sql_statement))
+    {
+        finish_with_error(conn);
+    }
+    printf("\nGood luck with your dead social life bud.\n");
+}
+// A utility function to print the adjacency list representation of graph
 void print_friend_graph(struct Graph *graph)
 {
     int v;
@@ -88,7 +126,6 @@ void print_friend_graph(struct Graph *graph)
         printf("\n");
     }
 }
-
 void print_userid_friends(struct Graph *graph, int v, MYSQL *conn, MYSQL_ROW row)
 {
     int status = 0;
@@ -108,6 +145,69 @@ void print_userid_friends(struct Graph *graph, int v, MYSQL *conn, MYSQL_ROW row
         }
         pCrawl = pCrawl->next;
     }
+}
+void find_common_friends(struct Graph *graph, int a, int b, MYSQL *conn, MYSQL_ROW row)
+{
+    struct user_node *aCrawl = graph->array[a].head;
+    struct user_node *bCrawl = graph->array[b].head;
+    while (aCrawl || bCrawl)
+    {
+        if (aCrawl->dest == bCrawl->dest)
+        {
+            sprintf(sql_statement, "SELECT username, first_name, last_name FROM user_database WHERE id=%d", aCrawl->dest);
+            if (mysql_query(conn, sql_statement))
+            {
+                finish_with_error(conn);
+            }
+            MYSQL_RES *result = mysql_store_result(conn);
+            while ((row = mysql_fetch_row(result)) != NULL)
+            {
+                printf("Username: %s\t", row[0]);
+                printf("Name: %s %s\n", row[1], row[2]);
+            }
+        }
+        aCrawl = aCrawl->next;
+        bCrawl = bCrawl->next;
+    }
+}
+void print_common_friends(struct Graph *graph, MYSQL *conn, MYSQL_ROW row)
+{
+    char user_a[50];
+    char user_b[50];
+    char user_a_uid[50];
+    char user_b_uid[50];
+    printf("Enter the first user: ");
+    scanf("%s", user_a);
+    printf("Enter the second user: ");
+    scanf("%s", user_b);
+    sprintf(sql_statement, "SELECT id FROM user_database WHERE username='%s'", user_a);
+    if (mysql_query(conn, sql_statement) != 0)
+    {
+        printf("Query failed  with the following message:\n");
+        printf("%s\n", mysql_error(conn));
+        exit(1);
+    }
+    MYSQL_RES *result = mysql_store_result(conn);
+    while ((row = mysql_fetch_row(result)) != NULL)
+    {
+        strcpy(user_a_uid, row[0]);
+    }
+    // mysql_free_result(result);
+    sprintf(sql_statement, "SELECT id FROM user_database WHERE username='%s'", user_b);
+    if (mysql_query(conn, sql_statement) != 0)
+    {
+        printf("Query failed  with the following message:\n");
+        printf("%s\n", mysql_error(conn));
+        exit(1);
+    }
+    result = mysql_store_result(conn);
+    while ((row = mysql_fetch_row(result)) != NULL)
+    {
+        strcpy(user_b_uid, row[0]);
+    }
+    // mysql_free_result(result);
+    printf("The common friends of %s and %s are:\n", user_a, user_b);
+    find_common_friends(graph, atoi(user_a_uid), atoi(user_b_uid), conn, row);
 }
 void print_friend_recommendations(struct Graph *graph, int v, MYSQL *conn, MYSQL_ROW row)
 {

@@ -72,7 +72,7 @@ int main()
     struct Graph *graph = createGraph(V);
     for (int i = 1; i < user_number; i++)
     {
-        int r = rand() % 20; // roughly the friends a user might have
+        int r = rand() % 200; // roughly the friends a user might have
         for (int j = 0; j < r; j++)
         {
             int x = rand() % user_number;
@@ -91,7 +91,9 @@ int main()
         printf("3. Enter 3 to make a new friend.\n");
         printf("4. Enter 4 to view a user's information.\n");
         printf("5. Enter 5 to view a user's friends.\n");
-        printf("6. Enter 6 to exit.\n");
+        printf("6. Enter 6 to view common friends of two users.\n");
+        printf("7. Enter 7 to delete your account.\n");
+        printf("8. Enter 8 to exit.\n");
         printf("Enter your choice: ");
         scanf("%d", &menu_choice);
         switch (menu_choice)
@@ -123,9 +125,20 @@ int main()
             getchar();
             break;
         case 6:
-            exit(0);
+            print_common_friends(graph, conn, row);
+            getchar();
+            getchar();
             break;
         case 7:
+            delete_your_account(graph, conn);
+            getchar();
+            getchar();
+            exit(0);
+            break;
+        case 8:
+            exit(0);
+            break;
+        case 9:
             print_friend_graph(graph);
             getchar();
             getchar();
