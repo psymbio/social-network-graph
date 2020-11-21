@@ -32,10 +32,11 @@ sudo apt-get install mysql-server
 sudo apt-get install libmysqlclient-dev
 ```
 
-Load the `user_database.sql` file onto your SQL server and save it with the table name: "user_database". Then simply clone the repository on your machine, and `cd` to its directory.
+Then simply clone the repository on your machine, and `cd` to its directory.
 
 ```
 gcc -o run $(mysql_config --cflags) run.c $(mysql_config --libs)
 ./run
 ```
 
+Then load the `user_database.sql` file onto your SQL server and save it with the table name: "user_database".
