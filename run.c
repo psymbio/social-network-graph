@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "sql.h"
-#include "graph.h"
+#include "functions.h"
 
 // Driver program to test above functions
 int main()
@@ -22,7 +22,7 @@ int main()
         fprintf(stderr, "\nError %s [%d]\n", mysql_error(conn), mysql_errno(conn));
         exit(1);
     }
-
+    
     int choice = 0;
     int login_status = 0;
     printf("1. Enter 1 to log in with existing account.\n");
@@ -72,7 +72,7 @@ int main()
     struct Graph *graph = createGraph(V);
     for (int i = 1; i < user_number; i++)
     {
-        int r = rand() % 200; // roughly the friends a user might have
+        int r = rand() % 10; // roughly the friends a user might have
         for (int j = 0; j < r; j++)
         {
             int x = rand() % user_number;
@@ -80,7 +80,8 @@ int main()
             // printf("\ndid it for %d and %d", i, x);
         }
     }
-
+    // print_friend_graph(graph);
+    // delete_social_network(graph);
     // print the adjacency list representation of the above graph
 
     int menu_choice = 0;
